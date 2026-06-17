@@ -573,3 +573,42 @@ func GetPlayerSessionState(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(state)
 }
+
+// GET /session-by-code/{code} — Get session by room code
+func GetSessionByCode(w http.ResponseWriter, r *http.Request) {
+	code := r.PathValue("code")
+
+	if code == "" {
+		http.Error(w, "Missing code", http.StatusBadRequest)
+		return
+	}
+
+	var session models.GameSession
+
+	err := db.DB.QueryRow(
+		context.Background(),
+		`SELECT id, game_id, code, status, current_question_id, buzzing_player_id, question_status, created_at
+		 FROM game_sessions
+		 WHERE code = $1
+		 ORDER BY created_at DESC
+		 LIMIT 1`,
+		code,
+	).Scan(
+		&session.ID,
+		&session.GameID,
+		&session.Code,
+		&session.Status,
+		&session.CurrentQuestionID,
+		&session.BuzzingPlayerID,
+		&session.QuestionStatus,
+		&session.CreatedAt,
+	)
+
+	if err != nil {
+		http.Error(w, "Session not found", http.StatusNotFound)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(session)
+}

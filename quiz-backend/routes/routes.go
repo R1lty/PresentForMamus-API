@@ -42,6 +42,6 @@ func SetupRoutes() *http.ServeMux {
 	router.HandleFunc("POST /sessions/{id}/judge", handlers.JudgeAnswer)          // Админ засчитывает или не засчитывает ответ
 	router.HandleFunc("GET /sessions/{id}/leaderboard", handlers.GetLeaderboard)  // Таблица лидеров по очкам
 	router.HandleFunc("GET /sessions/{id}/player-state", handlers.GetPlayerSessionState)
-
+	router.HandleFunc("GET /session-by-code/{code}", handlers.GetSessionByCode)
 	return router
 }
