@@ -120,6 +120,8 @@ func JoinSession(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	BroadcastSessionUpdated(sessionID)
+
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusCreated)
 	json.NewEncoder(w).Encode(sp)
@@ -146,6 +148,8 @@ func StartSession(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	BroadcastSessionUpdated(id)
+
 	w.WriteHeader(http.StatusNoContent)
 }
 
@@ -171,6 +175,8 @@ func FinishSession(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Session not found or not active", http.StatusConflict)
 		return
 	}
+
+	BroadcastSessionUpdated(id)
 
 	w.WriteHeader(http.StatusNoContent)
 }
@@ -276,6 +282,8 @@ func SetActiveQuestion(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	BroadcastSessionUpdated(id)
+
 	w.WriteHeader(http.StatusNoContent)
 }
 
@@ -333,6 +341,8 @@ func BuzzIn(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Cannot buzz: question is closed, someone already buzzed, or you are not in this session", http.StatusConflict)
 		return
 	}
+
+	BroadcastSessionUpdated(id)
 
 	w.WriteHeader(http.StatusNoContent)
 }
@@ -401,6 +411,7 @@ func JudgeAnswer(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
+		BroadcastSessionUpdated(id)
 		w.WriteHeader(http.StatusNoContent)
 		return
 	}
@@ -480,6 +491,8 @@ func JudgeAnswer(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
+
+	BroadcastSessionUpdated(id)
 
 	w.WriteHeader(http.StatusNoContent)
 }

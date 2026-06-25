@@ -43,5 +43,6 @@ func SetupRoutes() *http.ServeMux {
 	router.HandleFunc("GET /sessions/{id}/leaderboard", handlers.GetLeaderboard)  // Таблица лидеров по очкам
 	router.HandleFunc("GET /sessions/{id}/player-state", handlers.GetPlayerSessionState)
 	router.HandleFunc("GET /session-by-code/{code}", handlers.GetSessionByCode)
+	router.HandleFunc("GET /ws/sessions/{id}", handlers.SessionWebSocket)
 	return router
 }
