@@ -50,3 +50,10 @@ type LeaderboardEntry struct {
 	PlayerName string `json:"player_name"`
 	Score      int    `json:"score"`
 }
+
+type PlayerSessionState struct {
+	PlayerID             int  `json:"player_id"`
+	Score                int  `json:"score"`
+	IsBlockedForQuestion bool `json:"is_blocked_for_question"`
+	CanBuzz              bool `json:"can_buzz"`
+}
