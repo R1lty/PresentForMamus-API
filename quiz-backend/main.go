@@ -3,6 +3,7 @@ package main
 import (
 	"log"
 	"net/http"
+	"os"
 
 	"quiz-backend/db"
 	"quiz-backend/routes"
@@ -13,9 +14,14 @@ func main() {
 
 	router := routes.SetupRoutes()
 
-	log.Println("Server started on :3000")
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "3000"
+	}
 
-	err := http.ListenAndServe(":3000", router)
+	log.Println("Server started on :" + port)
+
+	err := http.ListenAndServe(":"+port, router)
 	if err != nil {
 		log.Fatal(err)
 	}

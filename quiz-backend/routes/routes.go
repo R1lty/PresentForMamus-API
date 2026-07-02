@@ -2,11 +2,32 @@ package routes
 
 import (
 	"net/http"
+	"os"
 
 	"quiz-backend/handlers"
 )
 
-func SetupRoutes() *http.ServeMux {
+func withCORS(router http.Handler) http.Handler {
+	allowedOrigin := os.Getenv("FRONTEND_ORIGIN")
+	if allowedOrigin == "" {
+		allowedOrigin = "*"
+	}
+
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Access-Control-Allow-Origin", allowedOrigin)
+		w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
+		w.Header().Set("Access-Control-Allow-Headers", "Content-Type, Authorization")
+
+		if r.Method == http.MethodOptions {
+			w.WriteHeader(http.StatusNoContent)
+			return
+		}
+
+		router.ServeHTTP(w, r)
+	})
+}
+
+func SetupRoutes() http.Handler {
 	router := http.NewServeMux()
 
 	// Игроки
@@ -44,5 +65,5 @@ func SetupRoutes() *http.ServeMux {
 	router.HandleFunc("GET /sessions/{id}/player-state", handlers.GetPlayerSessionState)
 	router.HandleFunc("GET /session-by-code/{code}", handlers.GetSessionByCode)
 	router.HandleFunc("GET /ws/sessions/{id}", handlers.SessionWebSocket)
-	return router
+	return withCORS(router)
 }
