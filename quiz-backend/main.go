@@ -5,11 +5,15 @@ import (
 	"net/http"
 	"os"
 
+	"github.com/joho/godotenv"
+
 	"quiz-backend/db"
 	"quiz-backend/routes"
 )
 
 func main() {
+	_ = godotenv.Load()
+
 	db.Connect()
 
 	router := routes.SetupRoutes()
